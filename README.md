@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Task Management System
 
 A Laravel-based Task Management System with authentication, role-based access control, task assignment, and task archiving functionality.
@@ -307,3 +308,6 @@ If given more time, improvements would include adding notifications, activity lo
 # License
 
 This project is developed for evaluation purposes.
+=======
+# task_Management
+>>>>>>> 467c8d731bbd35ed838bf59b0da3938626325f87
