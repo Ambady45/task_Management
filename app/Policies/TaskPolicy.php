@@ -1,0 +1,103 @@
+<?php
+
+namespace App\Policies;
+
+use App\Models\Task;
+use App\Models\User;
+use Illuminate\Auth\Access\Response;
+
+class TaskPolicy
+{
+    /**
+     * Determine whether the user can view any models.
+     */
+    public function viewAny(User $user): bool
+    {
+        return true;
+    }
+
+    /**
+     * Determine whether the user can view the model.
+     */
+    public function view(User $user, Task $task): bool
+    {
+        //admin can view all tasks  
+        if ($user->hasRole('Admin')) {
+            return true;
+        }
+        //head can view tasks they own
+        if ($user->hasRole('Head') && $task->owner_id === $user->id) {
+            return true;
+
+    }
+    //assigned user can view tasks they are assigned to
+       return $task->users()->where('user_id', $user->id)->exists();
+    }
+
+    /**
+     * Determine whether the user can create models.
+     */
+    public function create(User $user): bool
+    {
+        return true;
+    }
+
+    /**
+     * Determine whether the user can update the model.
+     */
+    public function update(User $user, Task $task): bool
+    {
+         if ($user->hasRole('Admin')) {
+            return true;
+        }
+
+        // Head who created task
+        if (
+            $user->hasRole('Head') &&
+            $task->owner_id == $user->id
+        ) {
+            return true;
+        }
+
+        // Assigned user
+        return $task->users()
+            ->where('user_id', $user->id)
+            ->exists();
+    }
+
+    /**
+     * Determine whether the user can delete the model.
+     */
+    public function delete(User $user, Task $task): bool
+    {
+        //delete only admin and owner can delete task
+        if ($user->hasRole('Admin')) {
+            return true;            
+        
+    }
+    return $task->owner_id == $user->id;
+    }
+
+    /**
+     * Determine whether the user can restore the model.
+     */
+    public function restore(User $user, Task $task): bool
+    {
+        if ($user->hasRole('Admin')) {
+            return true;            
+        
+    }
+    return $task->owner_id == $user->id;
+        
+    }
+
+    /**
+     * Determine whether the user can permanently delete the model.
+     */
+    public function forceDelete(User $user, Task $task): bool
+    {
+        return false;
+    }
+    //policy function for assignuser   
+  
+}
